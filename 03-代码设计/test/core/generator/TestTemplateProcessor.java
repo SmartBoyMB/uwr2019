@@ -10,6 +10,7 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -67,6 +68,22 @@ public class TestTemplateProcessor implements DataSourceType{
         //
         //
         // 这里写代码
+		ConstDataSource c1=new ConstDataSource();
+		DataSource d1=c1;
+		VarHolder ch1=new VarHolder(d1,"sex","Female");
+		VarHolder ch2=new VarHolder(d1,"readme","5");
+		VarHolder ch3=new VarHolder(d1,"testexpr","5.0");
+		ch3.setExpr("${num}+${readme}");
+		ArrayList<DataHolder> L = new ArrayList<DataHolder>();
+		L.add((DataHolder) ch1);
+		L.add((DataHolder) ch2);
+		L.add((DataHolder) ch3);
+		d1.setVars(L);
+		dsc=EasyMock.createMock(DataSourceConfig.class);
+		EasyMock.expect(dsc.getConstDataSource()).andReturn((ConstDataSource)d1).anyTimes();
+		PowerMock.mockStatic(DataSourceConfig.class);
+		EasyMock.expect(DataSourceConfig.newInstance()).andReturn(dsc).anyTimes();
+		EasyMock.expect(dsc.getDataSource(EasyMock.anyString())).andReturn(c1).anyTimes();
         //
         //------------------------------------------------
 		//5. 重放所有的行为。
